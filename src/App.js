@@ -1,26 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react';
+import Spots from "./components/parking-lot";
+import {listSpots} from "./api";
+import keyBy from 'lodash/keyBy';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+    const [spots, setSpots] = useState({});
+    const fetchSpots = async () => {
+        const res = await listSpots();
+        console.log(res.data);
+        setSpots(keyBy(res.data, 'id'));
+    };
+    const cb = () => {
+        fetchSpots().then().catch();
+    };
+    useEffect(cb, [true]);
+    return (<div>
+        <Spots fetchSpots={fetchSpots} spots={spots}/>
+    </div>);
 }
-
-export default App;
